@@ -42,21 +42,17 @@ function searchText(drink: Drink): string {
   );
 }
 
-const searchIndex = new Map(allDrinks.map((drink) => [drink.id, ` ${searchText(drink)} `]));
-const vocabulary = new Set([...searchIndex.values()].flatMap((text) => text.split(" ")));
+const searchIndex = new Map(allDrinks.map((drink) => [drink.id, ` ${searchText(drink)}`]));
 
 /**
- * Every query word must match a word in the drink's search text.
- * Complete words match exactly ("gin" ≠ "ginger"); partial words match
- * as prefixes so results update while typing ("vod" → vodka).
+ * Every query word must be the start of a word in the drink's search text,
+ * so results only ever narrow while typing ("g" → "gin" → "ginger").
  */
 export function matchesQuery(drink: Drink, query: string): boolean {
   const words = normalize(query).split(" ").filter(Boolean);
   if (words.length === 0) return true;
-  const haystack = searchIndex.get(drink.id) ?? ` ${searchText(drink)} `;
-  return words.every((word) =>
-    vocabulary.has(word) ? haystack.includes(` ${word} `) : haystack.includes(` ${word}`),
-  );
+  const haystack = searchIndex.get(drink.id) ?? ` ${searchText(drink)}`;
+  return words.every((word) => haystack.includes(` ${word}`));
 }
 
 export function filterDrinks(

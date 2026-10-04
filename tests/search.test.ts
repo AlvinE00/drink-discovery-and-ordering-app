@@ -17,8 +17,12 @@ describe("menu search", () => {
     );
   });
 
-  test("gin does not match ginger", () => {
-    expect(ids("gin")).toEqual(["french-75", "gin-collins"]);
+  test("results only narrow while typing (gin is a prefix of ginger)", () => {
+    const ginger = ids("ginger");
+    for (const partial of ["g", "gi", "gin", "ging", "ginge"]) {
+      expect(ids(partial)).toEqual(expect.arrayContaining(ginger));
+    }
+    expect(ids("gin")).toEqual(expect.arrayContaining(["french-75", "gin-collins", ...ginger]));
   });
 
   test("searches spirit names, nicknames and flavor tags", () => {
