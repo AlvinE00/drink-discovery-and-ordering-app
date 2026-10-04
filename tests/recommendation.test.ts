@@ -3,6 +3,7 @@ import { drinks, drinksById } from "@/data/drinks";
 import { enumerateFinderPaths } from "@/lib/finder-paths";
 import {
   FLAVOR_OPTIONS,
+  isGoodMatch,
   MAX_FOLLOW_UPS,
   matchedAnswerLabels,
   rankDrinks,
@@ -87,6 +88,25 @@ describe("recommendations", () => {
 
   test("shows the exhausted state once the good matches are used up", () => {
     for (const path of paths) expect(resolve(path.answers, path.sequence)).toEqual({ kind: "exhausted" });
+  });
+
+  test("non-alcoholic Try Another reaches every NA drink, closest matches first", () => {
+    const naDrinks = drinks.filter((d) => d.alcoholStatus === "non-alcoholic").map((d) => d.id).sort();
+    for (const path of paths.filter((p) => p.answers[0].value === "non-alcoholic")) {
+      expect([...path.sequence].sort()).toEqual(naDrinks);
+      const good = path.sequence.map((id) => isGoodMatch(id, path.answers));
+      // Every good match comes before every "a little different" pick.
+      expect(good.indexOf(false)).toBeGreaterThan(0);
+      expect(good.slice(good.indexOf(false))).not.toContain(true);
+    }
+  });
+
+  test("cocktail Try Another still stops at the best matches", () => {
+    for (const path of paths.filter((p) => p.answers[0].value === "alcoholic")) {
+      for (const id of path.sequence) expect(isGoodMatch(id, path.answers)).toBe(true);
+    }
+    const bittersweet = paths.find((p) => p.answers.map((a) => a.value).join() === "alcoholic,bittersweet,still");
+    expect(bittersweet?.sequence).toEqual(["paper-plane", "aperol-spritz"]);
   });
 
   test("the obvious picks come first", () => {

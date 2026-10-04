@@ -40,15 +40,53 @@ describe("finder state", () => {
   });
 
   test("Back steps through questions with previous answers selected", () => {
-    let state = run(answer(0, "alcoholic"), answer(1, "bold-strong"));
+    let state = run(answer(0, "alcoholic"), answer(1, "bittersweet"), answer(2, "still"));
     state = finderReducer(state, { type: "back" });
-    let view = getFinderView(state);
-    expect(view.kind === "question" && [view.index, view.selected]).toEqual([1, "bold-strong"]);
+    const view = getFinderView(state);
+    expect(view.kind === "question" && [view.index, view.selected]).toEqual([2, "still"]);
     state = finderReducer(state, { type: "back" });
-    view = getFinderView(state);
-    expect(view.kind === "question" && [view.index, view.selected]).toEqual([0, "alcoholic"]);
+    const flavor = getFinderView(state);
+    expect(flavor.kind === "question" && [flavor.index, flavor.selected]).toEqual([1, "bittersweet"]);
+  });
+
+  test("Back onto the first question resets every choice", () => {
+    let state = run(answer(0, "alcoholic"), answer(1, "bold-strong"), { type: "tryAnother" });
+    state = finderReducer(state, { type: "back" }); // pick 2 → pick 1
+    state = finderReducer(state, { type: "back" }); // pick 1 → flavor question
+    state = finderReducer(state, { type: "back" }); // flavor → start
+    expect(state).toEqual(initialFinderState);
+    const view = getFinderView(state);
+    expect(view.kind === "question" && view.selected).toBeUndefined();
     expect(isAtStart(state)).toBe(true);
-    expect(finderReducer(state, { type: "back" })).toBe(state);
+  });
+
+  test("Back and showPick move between earlier picks", () => {
+    let state = run(answer(0, "alcoholic"), answer(1, "bold-strong"), { type: "tryAnother" }, { type: "tryAnother" });
+    const [first, second, third] = state.shownDrinkIds;
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: third });
+    state = finderReducer(state, { type: "back" });
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: second });
+    state = finderReducer(state, { type: "back" });
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: first });
+    state = finderReducer(state, { type: "showPick", index: 2 });
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: third });
+    expect(finderReducer(state, { type: "showPick", index: 9 })).toBe(state);
+  });
+
+  test("Try Another from an earlier pick adds a new unseen drink", () => {
+    let state = run(answer(0, "alcoholic"), answer(1, "bold-strong"), { type: "tryAnother" });
+    state = finderReducer(state, { type: "showPick", index: 0 });
+    state = finderReducer(state, { type: "tryAnother" });
+    expect(state.shownDrinkIds).toHaveLength(3);
+    expect(new Set(state.shownDrinkIds).size).toBe(3);
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: state.shownDrinkIds[2] });
+  });
+
+  test("picks from the exhausted screen reopen that drink", () => {
+    let state = run(answer(0, "alcoholic"), answer(1, "bittersweet"), answer(2, "still"), { type: "tryAnother" }, { type: "tryAnother" });
+    expect(getFinderView(state)).toEqual({ kind: "exhausted" });
+    state = finderReducer(state, { type: "showPick", index: 0 });
+    expect(getFinderView(state)).toEqual({ kind: "result", drinkId: "paper-plane" });
   });
 
   test("re-choosing the same answer keeps later answers and the current drink", () => {
@@ -91,5 +129,10 @@ describe("finder state", () => {
     const corrupt = { ...saved, shownDrinkIds: ["not-a-drink", "house-lemonade"] } as FinderState;
     // Unknown and wrong-alcohol drinks are dropped, then a fresh pick is made.
     expect(restoreFinderState(corrupt).shownDrinkIds).toEqual(["whiskey-on-the-rocks"]);
+    expect(restoreFinderState(corrupt).pickIndex).toBe(0);
+    // Sessions saved before pick history existed open on the latest pick.
+    const legacy = { ...saved } as Partial<FinderState>;
+    delete legacy.pickIndex;
+    expect(restoreFinderState(legacy).pickIndex).toBe(saved.shownDrinkIds.length - 1);
   });
 });

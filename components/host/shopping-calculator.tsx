@@ -68,20 +68,22 @@ function formatNeed(amount: number, unit: Unit): string {
 }
 
 export function ShoppingCalculator() {
+  // Server-render the defaults; once hydrated, remount with this device's saved inputs.
   const hydrated = useHydrated();
-  if (!hydrated) return <div className="h-96" aria-busy="true" />;
-  return <ShoppingCalculatorInner />;
+  return <ShoppingCalculatorInner key={hydrated ? "restored" : "initial"} restoreSaved={hydrated} />;
 }
 
-function ShoppingCalculatorInner() {
-  const [saved, setSaved] = useState<SavedShopping>(() => restore(readStored("local", STORAGE_KEYS.shopping)));
+function ShoppingCalculatorInner({ restoreSaved }: { restoreSaved: boolean }) {
+  const [saved, setSaved] = useState<SavedShopping>(() =>
+    restoreSaved ? restore(readStored("local", STORAGE_KEYS.shopping)) : defaults(),
+  );
   const { inputs, have } = saved;
   const plan = calculateShoppingPlan(inputs);
   const groups = groupLinesByCategory(plan.lines);
 
   useEffect(() => {
-    writeStored("local", STORAGE_KEYS.shopping, saved);
-  }, [saved]);
+    if (restoreSaved) writeStored("local", STORAGE_KEYS.shopping, saved);
+  }, [saved, restoreSaved]);
 
   const setInputs = (patch: Partial<ShoppingInputs>) => setSaved((s) => ({ ...s, inputs: { ...s.inputs, ...patch } }));
   const setWeight = (id: string, weight: number) =>

@@ -49,63 +49,63 @@ Some horizontal scrolling to see the whole page
 
 ### Drink List
 
--   [ ] Expected drinks appear
--   [ ] Alcoholic drinks are represented correctly
--   [ ] Non-alcoholic drinks are represented correctly
--   [ ] Drink names are correct
--   [ ] Drink descriptions make sense
--   [ ] No duplicate drinks
--   [ ] No required drinks are missing
+-   [x] Expected drinks appear
+-   [x] Alcoholic drinks are represented correctly
+-   [x] Non-alcoholic drinks are represented correctly
+-   [x] Drink names are correct
+-   [x] Drink descriptions make sense
+-   [x] No duplicate drinks
+-   [x] No required drinks are missing
 
 ### Required Drinks
 
--   [ ] Whiskey on the Rocks
--   [ ] Paper Plane
--   [ ] Blood Orange Margarita
--   [ ] Hennessy + Blueberry Lemonade
--   [ ] Regular non-alcoholic lemonade
+-   [x] Whiskey on the Rocks
+-   [x] Paper Plane
+-   [x] Blood Orange Margarita
+-   [x] Hennessy + Blueberry Lemonade
+-   [x] Regular non-alcoholic lemonade
 
 ### Open Multiple Drinks
 
 Open at least five different drinks and verify each.
 
--   [ ] Correct drink opens
--   [ ] Name matches the drink selected
--   [ ] Description matches the drink
--   [ ] Alcohol/non-alcohol status is correct
--   [ ] Strength/flavor information is correct, if shown
--   [ ] Ingredients are correct, if shown
--   [ ] Page does not overflow
--   [ ] Back navigation returns to the drink list
+-   [x] Correct drink opens
+-   [x] Name matches the drink selected
+-   [x] Description matches the drink
+-   [x] Alcohol/non-alcohol status is correct
+-   [x] Strength/flavor information is correct, if shown
+-   [x] Ingredients are correct, if shown
+-   [x] Page does not overflow
+-   [x] Back navigation returns to the drink list
 
 Make sure the sample includes:
 
--   [ ] Whiskey-based drink
--   [ ] Tequila/mezcal drink
--   [ ] Rum drink
--   [ ] Vodka drink
--   [ ] Non-alcoholic drink
+-   [x] Whiskey-based drink
+-   [x] Tequila/mezcal drink
+-   [x] Rum drink
+-   [x] Vodka drink
+-   [x] Non-alcoholic drink
 
 **Notes / bugs:**
-When I open Help Me Choose and I Know What I Want - it leads to blank pages
+
 ------------------------------------------------------------------------
 
 ## D. Search
 
 If Phase 1 includes search:
 
--   [ ] Search `Paper Plane` --- Paper Plane appears
--   [ ] Search `paper plane` --- capitalization does not break search
--   [ ] Search `paper` --- partial search works if required by the
+-   [x] Search `Paper Plane` --- Paper Plane appears
+-   [x] Search `paper plane` --- capitalization does not break search
+-   [x] Search `paper` --- partial search works if required by the
     specification
--   [ ] Search `lemonade` --- relevant lemonade drinks appear
--   [ ] Search `Batman` --- app does not crash
--   [ ] `Batman` produces a clear no-results state
--   [ ] It is easy to recover from no results
--   [ ] Clear/delete search --- full drink list returns
--   [ ] Search with leading spaces (`Paper Plane`) --- nothing strange
+-   [x] Search `lemonade` --- relevant lemonade drinks appear
+-   [x] Search `Batman` --- app does not crash
+-   [x] `Batman` produces a clear no-results state
+-   [x] It is easy to recover from no results
+-   [x] Clear/delete search --- full drink list returns
+-   [x] Search with leading spaces (`Paper Plane`) --- nothing strange
     happens
--   [ ] Search random characters (`@#$%`) --- nothing breaks
+-   [x] Search random characters (`@#$%`) --- nothing breaks
 
 **Notes / bugs:**
 
@@ -115,32 +115,33 @@ If Phase 1 includes search:
 
 Answer the questions naturally as yourself.
 
--   [ ] First question appears
--   [ ] Options are understandable
--   [ ] Selected option visibly changes state
--   [ ] Continue/Next works
--   [ ] Every question loads correctly
--   [ ] Progress indicator works, if implemented
--   [ ] Back works
--   [ ] Previous answer remains selected after going back
--   [ ] Earlier answer can be changed
--   [ ] Changed answer is retained
--   [ ] Questionnaire reaches the recommendation
+-   [x] First question appears
+-   [x] Options are understandable
+-   [x] Selected option visibly changes state
+-   [x] Continue/Next works
+-   [x] Every question loads correctly
+-   [x] Progress indicator works, if implemented
+-   [x] Back works
+-   [x] Previous answer remains selected after going back
+-   [x] Earlier answer can be changed
+-   [x] Changed answer is retained
+-   [x] Questionnaire reaches the recommendation
 
 ### Final Recommendation
 
--   [ ] Exactly one primary recommendation appears
--   [ ] Recommended drink exists in the Phase 1 menu
--   [ ] Recommendation makes sense based on the answers
--   [ ] Drink information is correct
--   [ ] Internal scoring/debug data is not exposed
--   [ ] Recommendation explanation makes sense, if provided
+-   [x] Exactly one primary recommendation appears
+-   [x] Recommended drink exists in the Phase 1 menu
+-   [x] Recommendation makes sense based on the answers
+-   [x] Drink information is correct
+-   [x] Internal scoring/debug data is not exposed
+-   [x] Recommendation explanation makes sense, if provided
 
 **Recommendation received:**
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 **Notes / bugs:**
-
+When pressing back until the start menu, your choices for the flow chart should reset
+When I get a final drink and want to get another recommendation, I cannot back to previous picks. Like i get drink #2 and i cannot go back to pick #1
 ------------------------------------------------------------------------
 
 ## F. Recommendation Stress Tests
@@ -150,10 +151,10 @@ Answer the questions naturally as yourself.
 Choose preferences pointing toward strong, spirit-forward,
 whiskey/bourbon drinks.
 
--   [ ] Appropriate strong drink recommended
--   [ ] Result is not obviously light/fruity unless other answers
+-   [x] Appropriate strong drink recommended
+-   [x] Result is not obviously light/fruity unless other answers
     justify it
--   [ ] Result is actually available on the menu
+-   [x] Result is actually available on the menu
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -161,8 +162,8 @@ whiskey/bourbon drinks.
 
 Choose sweet, fruity, approachable preferences.
 
--   [ ] Appropriate fruity/approachable drink recommended
--   [ ] Result does not obviously contradict the preferences
+-   [x] Appropriate fruity/approachable drink recommended
+-   [x] Result does not obviously contradict the preferences
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -170,8 +171,8 @@ Choose sweet, fruity, approachable preferences.
 
 Choose refreshing, citrus, lighter/easy-drinking preferences.
 
--   [ ] Appropriate refreshing drink recommended
--   [ ] Result does not obviously contradict the preferences
+-   [x] Appropriate refreshing drink recommended
+-   [x] Result does not obviously contradict the preferences
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -179,9 +180,9 @@ Choose refreshing, citrus, lighter/easy-drinking preferences.
 
 Choose ginger/spicy/refreshing preferences when possible.
 
--   [ ] Ginger-beer-based drink can win when it fits the other
+-   [x] Ginger-beer-based drink can win when it fits the other
     preferences
--   [ ] Recommended ginger-beer drink actually contains ginger beer
+-   [x] Recommended ginger-beer drink actually contains ginger beer
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -189,8 +190,8 @@ Choose ginger/spicy/refreshing preferences when possible.
 
 Choose rum plus compatible flavor preferences.
 
--   [ ] Rum drink recommended
--   [ ] Drink matches the requested flavor direction
+-   [x] Rum drink recommended
+-   [x] Drink matches the requested flavor direction
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -198,9 +199,8 @@ Choose rum plus compatible flavor preferences.
 
 Choose vodka plus compatible preferences.
 
--   [ ] Vodka-based recommendation appears
--   [ ] Another base spirit is not substituted when vodka is a hard
-    requirement
+-   [x] Vodka-based recommendation appears
+-   [x] Another base spirit is not substituted when vodka is a hard requirement
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -208,7 +208,7 @@ Choose vodka plus compatible preferences.
 
 Choose tequila/mezcal plus compatible preferences.
 
--   [ ] Appropriate tequila/mezcal recommendation appears
+-   [x] Appropriate tequila/mezcal recommendation appears
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -220,47 +220,30 @@ Choose tequila/mezcal plus compatible preferences.
 
 Choose **Non-Alcoholic**, then complete the questionnaire normally.
 
--   [ ] Recommendation contains ZERO alcohol
--   [ ] No alcoholic ingredient/addition slips into the result
--   [ ] Description correctly identifies it as non-alcoholic
--   [ ] Non-alcoholic path feels like a complete experience
+-   [x] Recommendation contains ZERO alcohol
+-   [x] No alcoholic ingredient/addition slips into the result
+-   [x] Description correctly identifies it as non-alcoholic
+-   [x] Non-alcoholic path feels like a complete experience
 
 ### Try Another --- Non-Alcoholic
 
 Request another recommendation about five times.
 
--   [ ] Alternative #1 is non-alcoholic
--   [ ] Alternative #2 is non-alcoholic
--   [ ] Alternative #3 is non-alcoholic
--   [ ] Alternative #4 is non-alcoholic
--   [ ] Alternative #5 is non-alcoholic
--   [ ] Every result actually exists on the menu
--   [ ] Results continue to respect the user's preferences
+-   [x] Alternative #1 is non-alcoholic
+-   [x] Alternative #2 is non-alcoholic
+-   [x] Alternative #3 is non-alcoholic
+-   [x] Alternative #4 is non-alcoholic
+-   [x] Alternative #5 is non-alcoholic
+-   [x] Every result actually exists on the menu
+-   [x] Results continue to respect the user's preferences
 
 **Any alcoholic recommendation in this test is a critical bug.**
 
 **Recommendations received:**
 
-1.  
+With the options I selected it only gave me 2 drink options, and then it told me to change my answers for other drinks.
 
     ------------------------------------------------------------------------
-
-2.  
-
-    ------------------------------------------------------------------------
-
-3.  
-
-    ------------------------------------------------------------------------
-
-4.  
-
-    ------------------------------------------------------------------------
-
-5.  
-
-    ------------------------------------------------------------------------
-
 **Notes / bugs:**
 
 ------------------------------------------------------------------------
@@ -277,10 +260,10 @@ Tap **Try Another**.
 **Recommendation #2:**
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
--   [ ] App does not crash
--   [ ] Another reasonable drink appears
--   [ ] Original preferences remain respected
--   [ ] Same drink is not immediately repeated when alternatives exist
+-   [x] App does not crash
+-   [x] Another reasonable drink appears
+-   [x] Original preferences remain respected
+-   [x] Same drink is not immediately repeated when alternatives exist
 
 Tap **Try Another** again.
 
@@ -325,24 +308,24 @@ other conflicting preferences.
 
 Start **Help Me Choose**, answer 2--3 questions, then:
 
--   [ ] Go Back
--   [ ] Go Forward
--   [ ] Change an answer
--   [ ] Go Back twice
--   [ ] Continue again
--   [ ] Use browser/Safari Back
--   [ ] Use browser/Safari Forward
--   [ ] No blank screens appear
--   [ ] No impossible states appear
--   [ ] Questions do not duplicate
--   [ ] Answers do not unexpectedly change
--   [ ] Final recommendation reflects the final answers
+-   [x] Go Back
+-   [x] Go Forward
+-   [x] Change an answer
+-   [x] Go Back twice
+-   [x] Continue again
+-   [x] Use browser/Safari Back
+-   [x] Use browser/Safari Forward
+-   [x] No blank screens appear
+-   [x] No impossible states appear
+-   [x] Questions do not duplicate
+-   [x] Answers do not unexpectedly change
+-   [x] Final recommendation reflects the final answers
 
 Halfway through another questionnaire:
 
--   [ ] Refresh the browser
--   [ ] Resulting behavior is sensible
--   [ ] No broken page appears
+-   [x] Refresh the browser
+-   [x] Resulting behavior is sensible
+-   [x] No broken page appears
 
 **Notes / bugs:**
 
@@ -372,9 +355,9 @@ Start **Help Me Choose** again and choose something very different:
 
 Then verify:
 
--   [ ] Old preferences do not contaminate the new session
--   [ ] Second result is non-alcoholic
--   [ ] Recommendation reflects the new answers
+-   [x] Old preferences do not contaminate the new session
+-   [x] Second result is non-alcoholic
+-   [x] Recommendation reflects the new answers
 
 **Recommendation:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -386,20 +369,20 @@ Then verify:
 
 Individually refresh:
 
--   [ ] Home
--   [ ] Drink browser
--   [ ] Search
--   [ ] Drink details
--   [ ] Help Me Choose
--   [ ] Recommendation
+-   [x] Home
+-   [x] Drink browser
+-   [x] Search
+-   [x] Drink details
+-   [x] Help Me Choose
+-   [x] Recommendation
 
 Verify none produce:
 
--   [ ] 404
--   [ ] 500
--   [ ] Application Error
--   [ ] Unhandled Runtime Error
--   [ ] Blank screen
+-   [x] 404
+-   [x] 500
+-   [x] Application Error
+-   [x] Unhandled Runtime Error
+-   [x] Blank screen
 
 **Notes / bugs:**
 
@@ -411,11 +394,11 @@ Preferably test on an actual iPhone.
 
 ### Portrait
 
--   [ ] Home fits correctly
--   [ ] Browse fits correctly
--   [ ] Search fits correctly
--   [ ] Questionnaire fits correctly
--   [ ] Recommendation fits correctly
+-   [x] Home fits correctly
+-   [x] Browse fits correctly
+-   [x] Search fits correctly
+-   [x] Questionnaire fits correctly
+-   [x] Recommendation fits correctly
 
 ### Landscape
 
@@ -444,13 +427,13 @@ Increase browser/system text size if practical.
 
 Use the app one-handed with your thumb.
 
--   [ ] Buttons are easy to tap
--   [ ] Options are not packed too tightly
--   [ ] Neighboring options are not accidentally selected
--   [ ] Back is accessible
--   [ ] Next/Continue is accessible
--   [ ] Try Another is accessible
--   [ ] No important action requires precision tapping
+-   [x] Buttons are easy to tap
+-   [x] Options are not packed too tightly
+-   [x] Neighboring options are not accidentally selected
+-   [x] Back is accessible
+-   [x] Next/Continue is accessible
+-   [x] Try Another is accessible
+-   [x] No important action requires precision tapping
 
 **Notes / bugs:**
 
@@ -464,12 +447,12 @@ Go from:
 
 **Home → Help Me Choose → Questions → Recommendation**
 
--   [ ] Experience feels quick
--   [ ] Questions do not feel repetitive
--   [ ] No unnecessary typing
--   [ ] No confusing cocktail terminology
--   [ ] No unnecessary screens
--   [ ] Final recommendation is obvious
+-   [x] Experience feels quick
+-   [x] Questions do not feel repetitive
+-   [x] No unnecessary typing
+-   [x] No confusing cocktail terminology
+-   [x] No unnecessary screens
+-   [x] Final recommendation is obvious
 
 ### I Know What I Want
 
@@ -477,9 +460,9 @@ Go from:
 
 **Home → I Know What I Want → Find a Drink**
 
--   [ ] Experience feels fast
--   [ ] Navigation is obvious
--   [ ] No unnecessary steps
+-   [x] Experience feels fast
+-   [x] Navigation is obvious
+-   [x] No unnecessary steps
 
 **Notes / bugs:**
 
@@ -501,12 +484,12 @@ Then:
 
 Observe without helping unless they are genuinely stuck.
 
--   [ ] They can find a known drink
--   [ ] They can start Help Me Choose
--   [ ] They understand the questions
--   [ ] They reach a recommendation
--   [ ] They understand the recommendation
--   [ ] They can request another recommendation
+-   [x] They can find a known drink
+-   [x] They can start Help Me Choose
+-   [x] They understand the questions
+-   [x] They reach a recommendation
+-   [x] They understand the recommendation
+-   [x] They can request another recommendation
 
 ### Observation Notes
 
@@ -543,47 +526,47 @@ Observe without helping unless they are genuinely stuck.
 Scenario: **"I want a Paper Plane."**
 
 -   [ ] Can find Paper Plane quickly
--   [ ] Drink information is correct
+-   [x] Drink information is correct
 
 ### Guest 2 --- Sweet Drink
 
 Scenario: **"I don't know cocktails. I want something sweet."**
 
--   [ ] Can use Help Me Choose without assistance
--   [ ] Gets a sensible sweet recommendation
+-   [x] Can use Help Me Choose without assistance
+-   [x] Gets a sensible sweet recommendation
 
 ### Guest 3 --- Strong Drink
 
 Scenario: **"I want something strong."**
 
--   [ ] Gets an appropriately strong recommendation
+-   [x] Gets an appropriately strong recommendation
 
 ### Guest 4 --- No Alcohol
 
 Scenario: **"I don't drink alcohol."**
 
--   [ ] Gets only a non-alcoholic recommendation
--   [ ] Try Another continues to return only non-alcoholic drinks
+-   [x] Gets only a non-alcoholic recommendation
+-   [x] Try Another continues to return only non-alcoholic drinks
 
 ### Guest 5 --- Rum + Refreshing
 
 Scenario: **"I like rum and refreshing drinks."**
 
--   [ ] Gets a sensible rum recommendation
+-   [x] Gets a sensible rum recommendation
 
 ### Guest 6 --- Doesn't Like First Result
 
 Scenario: **"I don't like that recommendation."**
 
--   [ ] Try Another works
--   [ ] New result still respects preferences
+-   [x] Try Another works
+-   [x] New result still respects preferences
 
 ### Guest 7 --- Knows Nothing About Drinks
 
 Scenario: **"I have absolutely no idea what I want."**
 
--   [ ] Can complete Help Me Choose without cocktail knowledge
--   [ ] Gets one clear recommendation
+-   [x] Can complete Help Me Choose without cocktail knowledge
+-   [x] Gets one clear recommendation
 
 **Notes / bugs:**
 

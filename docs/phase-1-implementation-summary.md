@@ -32,10 +32,13 @@ All 24 drinks (18 alcoholic, 6 NA), exact spec recipes, and the 15 intentional N
 2. Main flavor (6 options; "Bold & Strong" hidden for NA) scores each drink from `flavorTags` via `FLAVOR_TAG_WEIGHTS`, plus a small `tasteProfile` nudge.
 3. Drinks scoring below 40% of the best flavor score are not "good matches" and are never shown.
 4. If 2+ candidates are within `TIE_MARGIN` (1 point) of the leader, ask the follow-up question that minimizes expected remaining candidates (spirit, carbonation, strength, style, clean/smoky). Options offered are only those leading to a good match. Max 2 follow-ups. Final tie-break: `recommendationPriority`, then id.
-5. Try Another: keeps answers, excludes shown drinks, asks no new questions. When none remain: "You've seen the best matches for those choices." with Change an Answer / Start Over / Browse Full Menu.
-6. Changing an earlier answer truncates later answers and shown drinks; re-picking the same answer keeps them. Back steps through questions.
+5. Try Another: keeps answers, excludes shown drinks, asks no new questions. When no good matches remain:
+   - **Cocktails:** "You've seen the best matches for those choices." with Change an Answer / Start Over / Browse Full Menu (per spec).
+   - **Non-alcoholic:** continues through the remaining NA drinks in rank order, each labelled "A little different" with a short note, until all 6 are seen; then "You've seen every non-alcoholic drink." (Added after manual QA, section G.)
+6. Pick history: Back on a result steps to earlier picks (also a "Previous pick · Pick 2 of 3 · Next pick" switcher); past picks on the end screen reopen in the finder. Try Another from an earlier pick still adds a new unseen drink.
+7. Changing an earlier answer truncates later answers and picks; re-picking the same answer keeps them. Back steps through questions; stepping back onto the first question (or leaving home from it) resets the whole session.
 
-Tested over all 34 enumerated paths: each yields exactly one valid drink, no repeats across Try Another, every drink reachable. Path lengths: 6 take 2 questions, 19 take 3, 9 take 4.
+Tested over all 34 enumerated paths: each yields exactly one valid drink, no repeats across Try Another, every drink reachable, every NA path reaches all 6 NA drinks with closest matches first. Path lengths: 6 take 2 questions, 19 take 3, 9 take 4.
 
 ## 4. Responsive behavior
 
@@ -55,7 +58,7 @@ Semantic landmarks and headings; focus moves to the new step's `h1` on each tran
 - **Host:** `components/host/{host-nav,page-heading,recipe-card,recipe-browser,stepper,shopping-calculator,checklist}`
 - **Shared/UI:** `components/shared/top-bar.tsx`, `components/ui/button.tsx` (shadcn, resized for 44-56 px targets)
 - **App:** `app/{layout,page,globals.css,not-found,manifest,icon.svg,apple-icon}`, `app/find`, `app/menu`, `app/drink/[id]`, `app/host/**`
-- **Tests (96):** `tests/{data,recommendation,finder-state,search,shopping,finder-paths}.test.ts`; `vitest.config.mts`
+- **Tests (102):** `tests/{data,recommendation,finder-state,search,shopping,finder-paths}.test.ts`; `vitest.config.mts`
 - **Docs:** `README.md`, this file
 
 ## 7. Deviations from the spec
@@ -70,6 +73,7 @@ Semantic landmarks and headings; focus moves to the new step's `h1` on each tran
 8. **Search alias:** "virgin margarita" on Blood Orange Limeade means it appears in "margarita" searches (intentional, tested).
 9. **Dependencies:** added Vitest (dev only). shadcn init installed the `cn` package rather than clsx/tailwind-merge; only the Button component is used (unused shadcn components removed).
 10. **Host link** is in the home footer (spec's screen map shows Host at top level; no dedicated entry on guest screens otherwise).
+11. **Non-alcoholic Try Another** continues past the good matches to all 6 NA drinks instead of showing the spec's "You've seen the best matches" message (cocktails still follow the spec). Requested after manual QA.
 
 ## 8. Known limitations and unverified items
 

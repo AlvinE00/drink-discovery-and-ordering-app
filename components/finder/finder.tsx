@@ -5,10 +5,12 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useEffect, useReducer, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/shared/top-bar";
+import { drinks } from "@/data/drinks";
 import { useHydrated } from "@/hooks/use-hydrated";
 import {
   finderReducer,
   getFinderView,
+  initialFinderState,
   isAtStart,
   restoreFinderState,
   type FinderView,
@@ -21,10 +23,10 @@ import { QuestionStep } from "./question-step";
 import { ResultView } from "./result-view";
 
 export function Finder() {
-  // sessionStorage is client-only; render a quiet placeholder until hydrated.
+  // The server (and hydration) render a fresh session so the page is never blank,
+  // even if JavaScript is slow or blocked. Once hydrated, remount with the saved one.
   const hydrated = useHydrated();
-  if (!hydrated) return <div className="min-h-dvh" aria-busy="true" />;
-  return <FinderSession />;
+  return <FinderSession key={hydrated ? "restored" : "initial"} restore={hydrated} />;
 }
 
 function viewKey(view: FinderView): string {
@@ -33,9 +35,9 @@ function viewKey(view: FinderView): string {
   return "exhausted";
 }
 
-function FinderSession() {
+function FinderSession({ restore }: { restore: boolean }) {
   const [state, dispatch] = useReducer(finderReducer, undefined, () =>
-    restoreFinderState(readStored("session", STORAGE_KEYS.finder)),
+    restore ? restoreFinderState(readStored("session", STORAGE_KEYS.finder)) : initialFinderState,
   );
   const view = getFinderView(state);
   const key = viewKey(view);
@@ -43,8 +45,9 @@ function FinderSession() {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    writeStored("session", STORAGE_KEYS.finder, state);
-  }, [state]);
+    // The pre-hydration instance must not overwrite the saved session.
+    if (restore) writeStored("session", STORAGE_KEYS.finder, state);
+  }, [state, restore]);
 
   // Move focus and scroll to the new step so keyboard and screen-reader users follow along.
   useEffect(() => {
@@ -67,7 +70,8 @@ function FinderSession() {
         left={
           atStart ? (
             <Button asChild variant="ghost" size="icon" className="-ml-2.5" aria-label="Back to home">
-              <Link href="/">
+              {/* Leaving from the first question clears the session, so Help Me Choose starts fresh. */}
+              <Link href="/" onClick={() => writeStored("session", STORAGE_KEYS.finder, initialFinderState)}>
                 <ArrowLeft aria-hidden className="size-5" />
               </Link>
             </Button>
@@ -121,7 +125,9 @@ function FinderSession() {
           <ResultView
             drinkId={view.drinkId}
             answers={state.answers}
-            pickNumber={state.shownDrinkIds.length}
+            pickIndex={state.pickIndex}
+            pickCount={state.shownDrinkIds.length}
+            onShowPick={(index) => dispatch({ type: "showPick", index })}
             headingRef={headingRef}
             onTryAnother={() => dispatch({ type: "tryAnother" })}
             onChangeAnswers={() => dispatch({ type: "edit", index: 1 })}
@@ -131,9 +137,14 @@ function FinderSession() {
         {view.kind === "exhausted" && (
           <ExhaustedView
             shownDrinkIds={state.shownDrinkIds}
+            seenEverything={
+              state.shownDrinkIds.length > 0 &&
+              state.shownDrinkIds.length === drinks.filter((d) => d.alcoholStatus === state.answers[0]?.value).length
+            }
             headingRef={headingRef}
             onChangeAnswers={() => dispatch({ type: "edit", index: 1 })}
             onRestart={() => dispatch({ type: "restart" })}
+            onShowPick={(index) => dispatch({ type: "showPick", index })}
           />
         )}
       </main>

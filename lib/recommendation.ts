@@ -28,6 +28,12 @@ export const TIE_MARGIN = 1;
 export const MAX_FOLLOW_UPS = 2;
 /** A drink is a "good match" if its flavor score is at least this share of the best. */
 const GOOD_MATCH_RATIO = 0.4;
+/**
+ * The non-alcoholic menu is small, so once its good matches run out, Try Another
+ * keeps going through the remaining NA drinks (labelled as "a little different")
+ * instead of stopping after one or two.
+ */
+const CONTINUE_PAST_GOOD_MATCHES: AlcoholStatus[] = ["non-alcoholic"];
 
 const ANSWER_POINTS = {
   spirit: 4,
@@ -310,8 +316,13 @@ export function resolve(
   if (!flavor) return { kind: "question", question: flavorQuestion(alcohol) };
 
   const shown = new Set(shownDrinkIds);
-  const candidates = goodMatches(rankDrinks(answers, drinks)).filter((r) => !shown.has(r.drink.id));
-  if (candidates.length === 0) return { kind: "exhausted" };
+  const ranked = rankDrinks(answers, drinks);
+  const candidates = goodMatches(ranked).filter((r) => !shown.has(r.drink.id));
+  if (candidates.length === 0) {
+    // Only reached via Try Another: every alcohol group has at least one good match.
+    const next = CONTINUE_PAST_GOOD_MATCHES.includes(alcohol) && ranked.find((r) => !shown.has(r.drink.id));
+    return next ? { kind: "recommendation", drinkId: next.drink.id } : { kind: "exhausted" };
+  }
 
   const followUpsAsked = answers.filter((a) => a.questionId !== "alcohol" && a.questionId !== "flavor").length;
   if (shown.size === 0 && followUpsAsked < MAX_FOLLOW_UPS) {
@@ -330,6 +341,11 @@ export function resolve(
 export function questionAt(answers: Answer[], index: number): Question | null {
   const resolution = resolve(answers.slice(0, index));
   return resolution.kind === "question" ? resolution.question : null;
+}
+
+/** False for drinks offered after the good matches ran out (shown as "a little different"). */
+export function isGoodMatch(drinkId: string, answers: Answer[], drinks: Drink[] = allDrinks): boolean {
+  return goodMatches(rankDrinks(answers, drinks)).some((r) => r.drink.id === drinkId);
 }
 
 /** Human-readable labels for the answers a drink actually matched. Used for "Why this drink". */

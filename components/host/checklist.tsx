@@ -15,18 +15,20 @@ function restore(saved: unknown): string[] {
 }
 
 export function Checklist() {
+  // Server-render an unchecked list; once hydrated, remount with this device's saved progress.
   const hydrated = useHydrated();
-  if (!hydrated) return <div className="h-96" aria-busy="true" />;
-  return <ChecklistInner />;
+  return <ChecklistInner key={hydrated ? "restored" : "initial"} restoreSaved={hydrated} />;
 }
 
-function ChecklistInner() {
-  const [done, setDone] = useState<string[]>(() => restore(readStored("local", STORAGE_KEYS.checklist)));
+function ChecklistInner({ restoreSaved }: { restoreSaved: boolean }) {
+  const [done, setDone] = useState<string[]>(() =>
+    restoreSaved ? restore(readStored("local", STORAGE_KEYS.checklist)) : [],
+  );
   const doneSet = new Set(done);
 
   useEffect(() => {
-    writeStored("local", STORAGE_KEYS.checklist, done);
-  }, [done]);
+    if (restoreSaved) writeStored("local", STORAGE_KEYS.checklist, done);
+  }, [done, restoreSaved]);
 
   const toggle = (id: string) => setDone((d) => (d.includes(id) ? d.filter((x) => x !== id) : [...d, id]));
   const percent = Math.round((done.length / ALL_IDS.length) * 100);

@@ -9,8 +9,10 @@ import type { Answer, Question } from "@/types/recommendation";
 export interface FinderState {
   /** Answers in the order they were asked. */
   answers: Answer[];
-  /** Drinks shown this session; the last one is the current recommendation. */
+  /** Drinks shown this session, in the order they were picked. */
   shownDrinkIds: string[];
+  /** Which pick in `shownDrinkIds` is on screen (lets guests go back to earlier picks). */
+  pickIndex: number;
   /** When set, the guest is revisiting the question at this index. */
   editingIndex: number | null;
   /** Try Another found no good unseen matches. */
@@ -20,6 +22,7 @@ export interface FinderState {
 export type FinderAction =
   | { type: "answer"; index: number; value: string }
   | { type: "tryAnother" }
+  | { type: "showPick"; index: number }
   | { type: "back" }
   | { type: "edit"; index: number }
   | { type: "restart" };
@@ -32,6 +35,7 @@ export type FinderView =
 export const initialFinderState: FinderState = {
   answers: [],
   shownDrinkIds: [],
+  pickIndex: 0,
   editingIndex: null,
   exhausted: false,
 };
@@ -40,7 +44,7 @@ export const initialFinderState: FinderState = {
 function settle(state: FinderState): FinderState {
   if (state.editingIndex !== null || state.shownDrinkIds.length > 0 || state.exhausted) return state;
   const resolution = resolve(state.answers);
-  if (resolution.kind === "recommendation") return { ...state, shownDrinkIds: [resolution.drinkId] };
+  if (resolution.kind === "recommendation") return { ...state, shownDrinkIds: [resolution.drinkId], pickIndex: 0 };
   if (resolution.kind === "exhausted") return { ...state, exhausted: true };
   return state;
 }
@@ -58,7 +62,7 @@ export function getFinderView(state: FinderState): FinderView {
     }
   }
   if (state.exhausted) return { kind: "exhausted" };
-  const current = state.shownDrinkIds.at(-1);
+  const current = state.shownDrinkIds[state.pickIndex] ?? state.shownDrinkIds.at(-1);
   if (current) return { kind: "result", drinkId: current };
 
   const resolution = resolve(state.answers);
@@ -87,25 +91,38 @@ export function finderReducer(state: FinderState, action: FinderAction): FinderS
 
       // New or changed answer: later answers and shown drinks no longer apply.
       const answers = [...state.answers.slice(0, action.index), { questionId: view.question.id, value: action.value }];
-      return settle({ answers, shownDrinkIds: [], editingIndex: null, exhausted: false });
+      return settle({ answers, shownDrinkIds: [], pickIndex: 0, editingIndex: null, exhausted: false });
     }
 
     case "tryAnother": {
       if (state.editingIndex !== null || state.exhausted || state.shownDrinkIds.length === 0) return state;
       const resolution = resolve(state.answers, state.shownDrinkIds);
+      // Always a new, unseen drink — even when viewing an earlier pick.
       if (resolution.kind === "recommendation") {
-        return { ...state, shownDrinkIds: [...state.shownDrinkIds, resolution.drinkId] };
+        const shownDrinkIds = [...state.shownDrinkIds, resolution.drinkId];
+        return { ...state, shownDrinkIds, pickIndex: shownDrinkIds.length - 1 };
       }
       return { ...state, exhausted: true };
     }
 
+    case "showPick": {
+      if (state.editingIndex !== null) return state;
+      if (action.index < 0 || action.index >= state.shownDrinkIds.length) return state;
+      return { ...state, pickIndex: action.index, exhausted: false };
+    }
+
     case "back": {
       const view = getFinderView(state);
-      if (view.kind === "exhausted") return { ...state, exhausted: false };
+      // Exhausted → the last pick.
+      if (view.kind === "exhausted") return { ...state, exhausted: false, pickIndex: state.shownDrinkIds.length - 1 };
       if (view.kind === "result") {
+        // Earlier picks first, then the last question.
+        if (state.pickIndex > 0) return { ...state, pickIndex: state.pickIndex - 1 };
         return state.answers.length > 0 ? { ...state, editingIndex: state.answers.length - 1 } : state;
       }
-      return view.index > 0 ? { ...state, editingIndex: view.index - 1 } : state;
+      // Stepping back onto the first question starts over.
+      if (view.index <= 1) return initialFinderState;
+      return { ...state, editingIndex: view.index - 1 };
     }
 
     case "edit":
@@ -141,6 +158,10 @@ export function restoreFinderState(saved: unknown): FinderState {
         (id): id is string => typeof id === "string" && drinksById[id]?.alcoholStatus === alcohol,
       )
     : [];
+  const pickIndex =
+    typeof raw.pickIndex === "number" && raw.pickIndex >= 0 && raw.pickIndex < shownDrinkIds.length
+      ? raw.pickIndex
+      : Math.max(0, shownDrinkIds.length - 1);
   const editingIndex =
     answersIntact && typeof raw.editingIndex === "number" && raw.editingIndex >= 0 && raw.editingIndex < answers.length
       ? raw.editingIndex
@@ -149,6 +170,7 @@ export function restoreFinderState(saved: unknown): FinderState {
   return settle({
     answers,
     shownDrinkIds,
+    pickIndex,
     editingIndex,
     exhausted: answersIntact && shownDrinkIds.length > 0 && raw.exhausted === true,
   });

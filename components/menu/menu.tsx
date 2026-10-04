@@ -64,14 +64,16 @@ export function Menu() {
           The Menu
         </h1>
       </header>
-      {/* Saved filters live in sessionStorage, so wait for the client before rendering them. */}
-      {hydrated ? <MenuBody /> : <div className="mt-6 h-40" aria-busy="true" />}
+      {/* Server-render the full menu; once hydrated, remount with the guest's saved filters. */}
+      <MenuBody key={hydrated ? "restored" : "initial"} restore={hydrated} />
     </div>
   );
 }
 
-function MenuBody() {
-  const [state, setState] = useState<MenuState>(() => restoreMenuState(readStored("session", STORAGE_KEYS.menu)));
+function MenuBody({ restore }: { restore: boolean }) {
+  const [state, setState] = useState<MenuState>(() =>
+    restore ? restoreMenuState(readStored("session", STORAGE_KEYS.menu)) : EMPTY,
+  );
   const searchRef = useRef<HTMLInputElement>(null);
   const results = filterDrinks(state);
   const counts = {
@@ -82,8 +84,8 @@ function MenuBody() {
   const hasFilters = state.query.trim() !== "" || state.filter !== "all" || state.tags.length > 0;
 
   useEffect(() => {
-    writeStored("session", STORAGE_KEYS.menu, state);
-  }, [state]);
+    if (restore) writeStored("session", STORAGE_KEYS.menu, state);
+  }, [state, restore]);
 
   const update = (patch: Partial<MenuState>) => setState((s) => ({ ...s, ...patch }));
   const toggleTag = (tag: FlavorTag) =>

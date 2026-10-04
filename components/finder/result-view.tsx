@@ -1,34 +1,76 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Leaf, Pencil, RotateCcw, Shuffle, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, Compass, Leaf, Pencil, RotateCcw, Shuffle, Sparkles } from "lucide-react";
 import type { Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { AlcoholBadge } from "@/components/drinks/alcohol-badge";
 import { GlassIllustration } from "@/components/drinks/glass-illustration";
 import { drinksById } from "@/data/drinks";
 import { guestIngredients, naAlternative } from "@/lib/drink-display";
-import { matchedAnswerLabels } from "@/lib/recommendation";
+import { isGoodMatch, matchedAnswerLabels } from "@/lib/recommendation";
 import type { Answer } from "@/types/recommendation";
 
 interface ResultViewProps {
   drinkId: string;
   answers: Answer[];
-  pickNumber: number;
+  /** 0-based position of this drink among the guest's picks. */
+  pickIndex: number;
+  pickCount: number;
+  onShowPick: (index: number) => void;
   headingRef: Ref<HTMLHeadingElement>;
   onTryAnother: () => void;
   onChangeAnswers: () => void;
   onRestart: () => void;
 }
 
-export function ResultView({ drinkId, answers, pickNumber, headingRef, onTryAnother, onChangeAnswers, onRestart }: ResultViewProps) {
+export function ResultView({
+  drinkId,
+  answers,
+  pickIndex,
+  pickCount,
+  onShowPick,
+  headingRef,
+  onTryAnother,
+  onChangeAnswers,
+  onRestart,
+}: ResultViewProps) {
   const drink = drinksById[drinkId];
   if (!drink) return null;
   const na = naAlternative(drink);
   const reasons = matchedAnswerLabels(drink, answers);
+  // Past the closest matches (non-alcoholic Try Another keeps going): say so plainly.
+  const goodMatch = isGoodMatch(drink.id, answers);
 
   return (
     <section aria-labelledby="result-heading" className="flex flex-col">
+      {pickCount > 1 && (
+        <nav aria-label="Your picks" className="mb-1 flex items-center justify-between gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="-ml-2 h-11"
+            disabled={pickIndex === 0}
+            onClick={() => onShowPick(pickIndex - 1)}
+          >
+            <ChevronLeft aria-hidden />
+            Previous pick
+          </Button>
+          <span aria-live="polite" className="text-sm font-medium text-muted-foreground tabular-nums">
+            Pick {pickIndex + 1} of {pickCount}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="-mr-2 h-11"
+            disabled={pickIndex === pickCount - 1}
+            onClick={() => onShowPick(pickIndex + 1)}
+          >
+            Next pick
+            <ChevronRight aria-hidden />
+          </Button>
+        </nav>
+      )}
       <div className="relative -mx-5 flex justify-center pt-2 pb-4 sm:mx-0">
         <div
           aria-hidden
@@ -45,7 +87,7 @@ export function ResultView({ drinkId, answers, pickNumber, headingRef, onTryAnot
       </div>
 
       <p className="eyebrow animate-rise text-center [animation-delay:150ms]">
-        {pickNumber > 1 ? `Pick #${pickNumber} · Try this instead…` : "Your drink is…"}
+        {pickIndex === 0 ? "Your drink is…" : `Pick #${pickIndex + 1} · ${goodMatch ? "Try this instead…" : "A little different"}`}
       </p>
       <h1
         id="result-heading"
@@ -65,7 +107,12 @@ export function ResultView({ drinkId, answers, pickNumber, headingRef, onTryAnot
         <AlcoholBadge status={drink.alcoholStatus} />
       </div>
 
-      {reasons.length > 0 && (
+      {!goodMatch ? (
+        <p className="animate-rise mx-auto mt-5 inline-flex max-w-md items-start gap-2 self-center rounded-2xl border border-border bg-surface/80 px-3.5 py-2 text-sm text-foreground/80 [animation-delay:380ms]">
+          <Compass aria-hidden className="mt-0.5 size-4 shrink-0 text-periwinkle" />
+          <span>You&apos;ve seen the closest matches. This one is a little different from what you picked.</span>
+        </p>
+      ) : reasons.length > 0 && (
         <p className="animate-rise mx-auto mt-5 inline-flex max-w-full items-center gap-2 self-center rounded-full border border-border bg-surface/80 px-3.5 py-1.5 text-sm text-foreground/80 [animation-delay:380ms]">
           <Sparkles aria-hidden className="size-4 shrink-0 text-periwinkle" />
           <span>
